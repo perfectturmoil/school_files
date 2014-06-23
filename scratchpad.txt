@@ -1,0 +1,12 @@
+Having trouble installing gruff, which I want for graphs.
+
+gem install gruff has trouble with rmagick, trying to install image magic manually
+sudo apt-get install imagemagick libmagickwand-dev
+
+that worked. 
+
+so sudo apt-get install imagemagick libmagickwand-dev;gem install rmagick; gem install gruff
+
+rbm gemset use school 
+
+that uses the school gemset which includes this.
