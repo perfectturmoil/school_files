@@ -14,12 +14,12 @@ x_axis = (0...26).to_a
 # a lot more compatible with most things
 
 class ArrayRegression
-  def initialization(y_array, x_array)
+  def initialize(y_array, x_array)
     @x_array = x_array
     @y_array = y_array
     @x_array_average = x_array.average
     @y_array_average = y_array.average
-    raise 'X and Y arrays must match' if @x_array.length != y.array.length
+    raise 'X and Y arrays must match' if @x_array.length != y_array.length
   end
 
   def slope
@@ -33,15 +33,16 @@ class ArrayRegression
   end
 
   def intercept
-    #this doesn't seem like it should work. slope should not be scoped here? self.scope?
-    y_array_average - slope * x_array_average
+    # this doesn't seem like it should work. slope should not be scoped here? self.scope?
+    # apparently it does. I should ask someone 
+    @y_array_average - slope * @x_array_average
   end
 
 end
 
-regressed = ArrayRegression(noisy_decline, x_axis)
+regressed = ArrayRegression.new(noisy_decline, x_axis)
 
-puts regressed.intercept
+puts "Equation: Y = #{regressed.slope} * X + #{regressed.intercept}"
 
 # 
 # numerator = x_axis.each_index.reduce(0) do |sum, index|
