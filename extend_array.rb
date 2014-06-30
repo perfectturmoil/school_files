@@ -2,7 +2,7 @@ class Array
   def average
     # INFO: general application of reduce requires the set to be acted on, an initial
     # value, and the operation to apply when reducing the array (or whatever)
-    # to a single value. Seems the operation symbol must be special, need to look into that
+    # to a single value. Seems theg operation symbol must be special, need to look into that
     self.reduce(:+).to_f / self.count.to_f
   end
 
