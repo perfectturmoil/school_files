@@ -10,3 +10,9 @@ so sudo apt-get install imagemagick libmagickwand-dev;gem install rmagick; gem i
 rbm gemset use school 
 
 that uses the school gemset which includes this.
+
+git add [file to add]
+
+git commit -a -m "whatever we did"
+
+git push remote master
