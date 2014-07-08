@@ -19,18 +19,25 @@ x_axis = (0...26).to_a
 class ArrayRegression
   # Performs Linear Regression. slope and intercept methods to be used like: 
   # Y = #{self.slope} * X + #{self.intercept}"
+  attr_reader :slope
+  attr_reader :intercept
+  attr_reader :r_squared
   def initialize(y_array, x_array)
+    
     @x_array = x_array
     @y_array = y_array
     @x_array_average = x_array.average
     @y_array_average = y_array.average
     raise 'X and Y arrays must match' if @x_array.length != y_array.length
+    @slope = generate_slope
+    @intercept = generate_intercept
+    @r_squared = generate_r_squared
   end
 
   # TODO: rather than slope and intercept method, I should have instance variables with 
   # an attribute reader and private methods. Then I call private methods in the initialize
 
-  def slope
+  def generate_slope
     numerator = @x_array.each_index.reduce(0) do |sum, index|
       sum + ((@x_array[index] - @x_array_average) * (@y_array[index] - @y_array_average))
     end
@@ -40,7 +47,7 @@ class ArrayRegression
     (numerator / denominator)
   end
 
-  def intercept
+  def generate_intercept
     # this doesn't seem like it should work. slope should not be scoped here? self.scope?
     # apparently it does. I should ask someone 
     @y_array_average - slope * @x_array_average
@@ -48,7 +55,7 @@ class ArrayRegression
 
 
   # attempting to add r squared calculation
-  def r_squared
+  def generate_r_squared
     # from http://en.wikipedia.org/wiki/Coefficient_of_determination :
     # r squared = 1 - SSres / SStot
     # SSres = sum of (Y[i] - regression[i]) ^ 2
@@ -63,8 +70,7 @@ class ArrayRegression
 
     (1 - ( squared_sum_residuals / squared_sum_totals ) ).to_f
   end
-# Y = #{regressed.slope} * X + #{regressed.intercept}"
-
+  private :generate_intercept, :generate_slope, :generate_r_squared
 end
 
 regressed_noisy_decline = ArrayRegression.new(noisy_decline, x_axis)
