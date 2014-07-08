@@ -1,5 +1,5 @@
 require './extend_array'
-
+#I've stuck a comment here.
 noisy_decline = [10.3, 9.7, 8.9, 8.9, 8.9, 7.6, 7.8, 6.7, 6.4, 6.4, 6.5, 5.5, 5.4, 4.6, 4, 3.9, 3.1, 2.7, 3.1, 2.8, 2.1, 1.7, 0.9, 1, 0.3, 0.3,]
 clean_decline = noisy_decline.rolling_average(3)
 
