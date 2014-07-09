@@ -36,6 +36,7 @@ class ArrayRegression
 
   # TODO: rather than slope and intercept method, I should have instance variables with 
   # an attribute reader and private methods. Then I call private methods in the initialize
+  # MORE LIKE TODONE!
 
   def generate_slope
     numerator = @x_array.each_index.reduce(0) do |sum, index|
@@ -73,21 +74,58 @@ class ArrayRegression
   private :generate_intercept, :generate_slope, :generate_r_squared
 end
 
-regressed_noisy_decline = ArrayRegression.new(noisy_decline, x_axis)
-puts "Equation for noisy decline: Y = #{regressed_noisy_decline.slope} * X + #{regressed_noisy_decline.intercept}"
-puts "R Squared for noisy decline: #{regressed_noisy_decline.r_squared}"
+# regressed_noisy_decline = ArrayRegression.new(noisy_decline, x_axis)
+# puts "Equation for noisy decline: Y = #{regressed_noisy_decline.slope} * X + #{regressed_noisy_decline.intercept}"
+# puts "R Squared for noisy decline: #{regressed_noisy_decline.r_squared}"
+# 
+# regressed_clean_decline = ArrayRegression.new(clean_decline, x_axis)
+# puts "Equation for clean decline: Y = #{regressed_clean_decline.slope} * X + #{regressed_clean_decline.intercept}"
+# puts "R Squared for clean decline: #{regressed_clean_decline.r_squared}"
+#  
+# regressed_noisy_knee = ArrayRegression.new(noisy_knee, x_axis)
+# puts "Equation for noisy knee: Y = #{regressed_noisy_knee.slope} * X + #{regressed_noisy_knee.intercept}"
+# puts "R Squared for noisy knee: #{regressed_noisy_knee.r_squared}"
+ 
+def find_change_points(signal, x_axis, number_of_chunks = 5, threshold = 0.5)
+  # Breaks array into chunks, compares the slopes. Returns an array of the index
+  # (start, middle) that it appears to change. 
+  # TODO: Consider implementing something R2'd
+  raise "signal not an array" unless signal.kind_of?(Array)
+  raise "x axis not an array" unless x_axis.kind_of?(Array)
+  change_indexes = []
+  length_of_chunk = (signal.length / number_of_chunks).floor
+
+  (1..number_of_chunks-2).each do |chunk_count| # Changed this to -2 from -1, because slope_stack[2] was NaN on last itteration
+    slope_stack = []
+    [-1, 0, 1].each do |offset|
+      test_signal = signal.slice( (chunk_count + offset) * length_of_chunk, length_of_chunk)
+      test_x = x_axis.slice( (chunk_count + offset) * length_of_chunk, length_of_chunk)
+      slope_stack << ArrayRegression.new(test_signal, test_x).slope 
+    end
+
+    pre_minus = slope_stack[0] - slope_stack[0] * threshold
+    pre_plus = slope_stack[0] + slope_stack[0] * threshold
+    post_minus = slope_stack[2] - slope_stack[2] * threshold
+    post_plus = slope_stack[2] + slope_stack[2] * threshold
+
+    puts "testing if #{slope_stack[1]} is bewteen #{pre_minus} and #{pre_plus}"
+    puts "then if #{slope_stack[1]} is bewteen #{post_minus} and #{post_plus}"
+    puts slope_stack[2]
+    # TODO: slopes being negative is screwing me up. Also, my slope numbers are real small, data may be too noisy?
+    if not slope_stack[1].between?(slope_stack[0] - slope_stack[0] * threshold, slope_stack[0] + slope_stack[0] * threshold)
+      if slope_stack[1].between?(slope_stack[2] - slope_stack[2] * threshold, slope_stack[2] + slope_stack[2] * threshold)
+        change_indexes << chunk_count * length_of_chunk
+      end
+    end 
+  end
+  
+  puts change_indexes
+end
 
 
-regressed_clean_decline = ArrayRegression.new(clean_decline, x_axis)
-puts "Equation for clean decline: Y = #{regressed_clean_decline.slope} * X + #{regressed_clean_decline.intercept}"
-puts "R Squared for clean decline: #{regressed_clean_decline.r_squared}"
- 
- 
 
-regressed_noisy_knee = ArrayRegression.new(noisy_knee, x_axis)
-puts "Equation for noisy knee: Y = #{regressed_noisy_knee.slope} * X + #{regressed_noisy_knee.intercept}"
-puts "R Squared for noisy knee: #{regressed_noisy_knee.r_squared}"
- 
+find_change_points(clean_knee, x_axis, 5, 0.5)
+
 
 # numerator = x_axis.each_index.reduce(0) do |sum, index|
   # sum + ((x_axis[index] - x_axis.average) * (noisy_decline[index] - noisy_decline.average))
