@@ -4,7 +4,7 @@ require 'gruff'
 
 
 
-def find_change_points(y_axis, x_axis, number_of_chunks = 5, change_threshold = 1)
+def find_change_points(y_axis, x_axis, number_of_chunks = 5, change_threshold = 1, change_type = :threshold)
   # Breaks y_axis and x_axis into chunks, finds slope of each chunk.
   # Then compares slopes to determine if that chunk represents
   # a change.
@@ -50,14 +50,23 @@ def find_change_points(y_axis, x_axis, number_of_chunks = 5, change_threshold = 
     # I need a better way of calculating change threshold.
     # This way works, sorta - But having a fixed +/- isn't great, it probably needs
     # to be a percent of itself, or something logarithmic. 
+    min_prev_slope = nil
+    max_prev_slope = nil
 
-    min_prev_slope = [prev_slope - change_threshold , prev_slope + change_threshold].min
-    max_prev_slope = [prev_slope - change_threshold , prev_slope + change_threshold].max
-
-    # puts "min prev: #{min_prev_slope}"
-    # puts "slope: #{this_slope}"
-    # puts "max prev: #{max_prev_slope}"
-    # puts "\n"
+    if change_type == :multiplier
+      min_prev_slope = [prev_slope - prev_slope * change_threshold , prev_slope + prev_slope * change_threshold].min
+      max_prev_slope = [prev_slope - prev_slope * change_threshold , prev_slope + prev_slope * change_threshold].max
+    elsif change_type == :threshold
+      min_prev_slope = [prev_slope - change_threshold , prev_slope + change_threshold].min
+      max_prev_slope = [prev_slope - change_threshold , prev_slope + change_threshold].max
+    else # fail out to treating it like a fixed threshold
+      min_prev_slope = [prev_slope - change_threshold , prev_slope + change_threshold].min
+      max_prev_slope = [prev_slope - change_threshold , prev_slope + change_threshold].max
+    end
+    puts "min prev: #{min_prev_slope}"
+    puts "slope: #{this_slope}"
+    puts "max prev: #{max_prev_slope}"
+    puts "\n"
 
     if not this_slope.between?(min_prev_slope, max_prev_slope)
       slope_change_x_values << x_axis[chunk_length * chunk]
@@ -73,4 +82,17 @@ noisy_knee = [10.2, 9.2, 9.4, 8.7, 8.4, 7.9, 6.7, 6.4, 5.6, 5.1, 5.2, 4.7, 3.7, 
 clean_knee = noisy_knee.rolling_average(3)
 x_axis = (0...26).to_a
 
+puts "Change points in clean knee: 4 chuncks, threshold .2, default change_type"
 puts find_change_points(clean_knee, x_axis, 4, 0.2)
+
+
+puts "Change points in clean knee: 4 chuncks, threshold .2, :threshold"
+puts find_change_points(clean_knee, x_axis, 4, 0.2, :threshold)
+
+puts "Change points in clean knee: 4 chuncks, threshold .2, :multiplier"
+puts find_change_points(clean_knee, x_axis, 4, 0.2, :multiplier)
+
+
+puts "Change points in clean knee: 4 chuncks, threshold .5, :multiplier"
+puts find_change_points(clean_knee, x_axis, 4, 0.5, :multiplier)
+
