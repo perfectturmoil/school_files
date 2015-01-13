@@ -6,7 +6,7 @@ class ArrayRegression
   # inputs are the array for Y values followed by the array for X values
   
   # NOTE: I may want to consider having a single hash 
-  # represent the wave from, rather than two arrays.
+  # represent the wave form, rather than two arrays.
   # however, the two arrays will probably be
   # a lot more compatible with most things
 
