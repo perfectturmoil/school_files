@@ -34,6 +34,17 @@ class Array
     end
     a_return
   end
+
+  def rolling_average!(roll_count = 3)
+    self.each_index do |index|
+      if index < roll_count
+        self[index] = self.slice(0, index + 1).average
+      else
+        self[index] = self.slice(index - roll_count + 1, roll_count).average
+      end
+    end
+    self
+  end
 end
 
 def test_array_extension

@@ -1,10 +1,9 @@
-# Process .DAT file, return x_axis array, y_axis_array
+# Process .DAT file, return x_axis array, y_axis_array (empty arrays if no rows matched)
 # might also work with a CSV, it looks for a numbery thing, either some white space 
 # or a comma, and a numbery thing. One sample file has multiple columns of data, this will
-# only get the first
-# If it fails, to find any data, it returns an empty array. 
+# only get the first. 
 
-# usage: x_points, y_points = ProcessDat::process_dat('/home/dan/school/data_files/50ugCNTwithcells.dat')
+# usage: x_points, y_points = ProcessDat.process_dat('/home/dan/school/data_files/50ugCNTwithcells.dat')
 
 module ProcessDat
   def self.process_dat(filename)
@@ -23,4 +22,4 @@ module ProcessDat
     return x_axis, y_axis
   end
 end
-# puts ProcessDat::process_dat('/home/dan/school/data_files/50ugCNTwithcells.dat')
+# puts ProcessDat.process_dat('/home/dan/school/data_files/50ugCNTwithcells.dat')
